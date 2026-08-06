@@ -2,8 +2,8 @@ package com.deskfloor.service;
 
 import com.deskfloor.dto.EmployeeRequest;
 import com.deskfloor.dto.EmployeeResponse;
-
-import java.util.List;
+import com.deskfloor.enums.EmployeeStatus;
+import org.springframework.data.domain.Page;
 
 public interface EmployeeService {
 
@@ -11,9 +11,32 @@ public interface EmployeeService {
 
     EmployeeResponse getEmployeeById(Long id);
 
-    List<EmployeeResponse> getAllEmployees();
+    Page<EmployeeResponse> getAllEmployees(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
 
-    EmployeeResponse updateEmployee(Long id, EmployeeRequest request);
+    Page<EmployeeResponse> searchEmployees(
+            String keyword,
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
+
+    Page<EmployeeResponse> filterEmployees(
+            String department,
+            EmployeeStatus status,
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
+
+    EmployeeResponse updateEmployee(Long id,
+                                    EmployeeRequest request);
 
     void deleteEmployee(Long id);
 

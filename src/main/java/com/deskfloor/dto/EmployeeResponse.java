@@ -11,32 +11,16 @@ public class EmployeeResponse {
     private String fullName;
     private String email;
     private String phone;
-    private String department;
+
+    private Long departmentId;
+    private String departmentName;
+
     private String designation;
     private Double salary;
     private LocalDate joiningDate;
     private EmployeeStatus status;
 
     public EmployeeResponse() {
-    }
-
-    public EmployeeResponse(Long id, String employeeCode,
-                            String fullName, String email,
-                            String phone, String department,
-                            String designation, Double salary,
-                            LocalDate joiningDate,
-                            EmployeeStatus status) {
-
-        this.id = id;
-        this.employeeCode = employeeCode;
-        this.fullName = fullName;
-        this.email = email;
-        this.phone = phone;
-        this.department = department;
-        this.designation = designation;
-        this.salary = salary;
-        this.joiningDate = joiningDate;
-        this.status = status;
     }
 
     public Long getId() {
@@ -79,12 +63,20 @@ public class EmployeeResponse {
         this.phone = phone;
     }
 
-    public String getDepartment() {
-        return department;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public String getDesignation() {

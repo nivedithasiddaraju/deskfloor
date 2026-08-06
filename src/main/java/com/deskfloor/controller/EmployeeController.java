@@ -3,12 +3,12 @@ package com.deskfloor.controller;
 import com.deskfloor.dto.ApiResponse;
 import com.deskfloor.dto.EmployeeRequest;
 import com.deskfloor.dto.EmployeeResponse;
+import com.deskfloor.enums.EmployeeStatus;
 import com.deskfloor.service.EmployeeService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -43,12 +43,95 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAllEmployees() {
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getAllEmployees(
 
-        List<EmployeeResponse> response = employeeService.getAllEmployees();
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "5") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Page<EmployeeResponse> response =
+                employeeService.getAllEmployees(
+                        page,
+                        size,
+                        sortBy,
+                        direction
+                );
 
         return ResponseEntity.ok(
-                new ApiResponse<>(true, "Employees fetched successfully", response)
+                new ApiResponse<>(
+                        true,
+                        "Employees fetched successfully",
+                        response
+                )
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> searchEmployees(
+
+            @RequestParam String keyword,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "5") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Page<EmployeeResponse> response =
+                employeeService.searchEmployees(
+                        keyword,
+                        page,
+                        size,
+                        sortBy,
+                        direction
+                );
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Employees fetched successfully",
+                        response
+                )
+        );
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> filterEmployees(
+
+            @RequestParam String department,
+
+            @RequestParam EmployeeStatus status,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "5") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Page<EmployeeResponse> response =
+                employeeService.filterEmployees(
+                        department,
+                        status,
+                        page,
+                        size,
+                        sortBy,
+                        direction
+                );
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Employees fetched successfully",
+                        response
+                )
         );
     }
 
@@ -72,7 +155,11 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>(true, "Employee deleted successfully", "Deleted")
+                new ApiResponse<>(
+                        true,
+                        "Employee deleted successfully",
+                        "Deleted"
+                )
         );
     }
 }

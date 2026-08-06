@@ -1,23 +1,26 @@
 package com.deskfloor.repository;
 
 import com.deskfloor.entity.Employee;
+import com.deskfloor.enums.EmployeeStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    Optional<Employee> findByEmployeeCode(String employeeCode);
+    Page<Employee> findByEmployeeCodeContainingIgnoreCaseOrFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrDepartmentDepartmentNameContainingIgnoreCaseOrDesignationContainingIgnoreCase(
+            String employeeCode,
+            String fullName,
+            String email,
+            String departmentName,
+            String designation,
+            Pageable pageable
+    );
 
-    Optional<Employee> findByEmail(String email);
-
-    List<Employee> findByDepartment(String department);
-
-    List<Employee> findByFullNameContainingIgnoreCase(String fullName);
-
-    boolean existsByEmployeeCode(String employeeCode);
-
-    boolean existsByEmail(String email);
+    Page<Employee> findByDepartmentDepartmentNameContainingIgnoreCaseAndStatus(
+            String departmentName,
+            EmployeeStatus status,
+            Pageable pageable
+    );
 
 }

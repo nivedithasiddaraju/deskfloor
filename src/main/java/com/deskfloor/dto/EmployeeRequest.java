@@ -1,9 +1,6 @@
 package com.deskfloor.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -22,8 +19,8 @@ public class EmployeeRequest {
     @NotBlank(message = "Phone Number is required")
     private String phone;
 
-    @NotBlank(message = "Department is required")
-    private String department;
+    @NotNull(message = "Department Id is required")
+    private Long departmentId;
 
     @NotBlank(message = "Designation is required")
     private String designation;
@@ -35,25 +32,6 @@ public class EmployeeRequest {
     private LocalDate joiningDate;
 
     public EmployeeRequest() {
-    }
-
-    public EmployeeRequest(String employeeCode,
-                           String fullName,
-                           String email,
-                           String phone,
-                           String department,
-                           String designation,
-                           Double salary,
-                           LocalDate joiningDate) {
-
-        this.employeeCode = employeeCode;
-        this.fullName = fullName;
-        this.email = email;
-        this.phone = phone;
-        this.department = department;
-        this.designation = designation;
-        this.salary = salary;
-        this.joiningDate = joiningDate;
     }
 
     public String getEmployeeCode() {
@@ -88,12 +66,12 @@ public class EmployeeRequest {
         this.phone = phone;
     }
 
-    public String getDepartment() {
-        return department;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public String getDesignation() {

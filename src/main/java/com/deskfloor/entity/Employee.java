@@ -13,10 +13,10 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "employee_code", nullable = false, unique = true)
     private String employeeCode;
 
-    @Column(nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @Column(nullable = false, unique = true)
@@ -25,8 +25,9 @@ public class Employee {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @Column(nullable = false)
     private String designation;
@@ -34,30 +35,13 @@ public class Employee {
     @Column(nullable = false)
     private Double salary;
 
-    @Column(nullable = false)
+    @Column(name = "joining_date", nullable = false)
     private LocalDate joiningDate;
 
     @Enumerated(EnumType.STRING)
     private EmployeeStatus status;
 
     public Employee() {
-    }
-
-    public Employee(Long id, String employeeCode, String fullName,
-                    String email, String phone, String department,
-                    String designation, Double salary,
-                    LocalDate joiningDate, EmployeeStatus status) {
-
-        this.id = id;
-        this.employeeCode = employeeCode;
-        this.fullName = fullName;
-        this.email = email;
-        this.phone = phone;
-        this.department = department;
-        this.designation = designation;
-        this.salary = salary;
-        this.joiningDate = joiningDate;
-        this.status = status;
     }
 
     public Long getId() {
@@ -100,11 +84,11 @@ public class Employee {
         this.phone = phone;
     }
 
-    public String getDepartment() {
+    public Department getDepartment() {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(Department department) {
         this.department = department;
     }
 
