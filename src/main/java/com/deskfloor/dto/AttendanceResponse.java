@@ -1,40 +1,29 @@
-package com.deskfloor.entity;
+package com.deskfloor.dto;
 
 import com.deskfloor.enums.AttendanceStatus;
-import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Entity
-@Table(name = "attendance")
-public class Attendance {
+public class AttendanceResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
+    private Long employeeId;
 
-    @Column(name = "attendance_date", nullable = false)
+    private String employeeName;
+
     private LocalDate attendanceDate;
 
-    @Column(name = "check_in_time")
     private LocalTime checkInTime;
 
-    @Column(name = "check_out_time")
     private LocalTime checkOutTime;
 
-    @Column(name = "working_hours")
     private Double workingHours;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private AttendanceStatus status;
 
-    public Attendance() {
+    public AttendanceResponse() {
     }
 
     public Long getId() {
@@ -45,12 +34,20 @@ public class Attendance {
         this.id = id;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
     }
 
     public LocalDate getAttendanceDate() {
