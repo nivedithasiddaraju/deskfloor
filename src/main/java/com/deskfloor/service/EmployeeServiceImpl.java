@@ -89,7 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return employeeRepository
-                .findByEmployeeCodeContainingIgnoreCaseOrFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrDepartmentDepartmentNameContainingIgnoreCaseOrDesignationContainingIgnoreCase(
+                .findByEmployeeCodeContainingIgnoreCaseOrFullNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrDepartment_DepartmentNameContainingIgnoreCaseOrDesignationContainingIgnoreCase(
                         keyword,
                         keyword,
                         keyword,
@@ -116,7 +116,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return employeeRepository
-                .findByDepartmentDepartmentNameContainingIgnoreCaseAndStatus(
+                .findByDepartment_DepartmentNameContainingIgnoreCaseAndStatus(
                         department,
                         status,
                         pageable
