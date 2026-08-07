@@ -1,7 +1,10 @@
 package com.deskfloor.service;
 
+import com.deskfloor.dto.AttendanceStatisticsResponse;
 import com.deskfloor.dto.DashboardResponse;
 import com.deskfloor.dto.DepartmentStatisticsResponse;
+import com.deskfloor.dto.EmployeeStatusStatisticsResponse;
+import com.deskfloor.dto.LeaveStatisticsResponse;
 import com.deskfloor.enums.AttendanceStatus;
 import com.deskfloor.enums.EmployeeStatus;
 import com.deskfloor.enums.LeaveStatus;
@@ -10,8 +13,6 @@ import com.deskfloor.repository.DepartmentRepository;
 import com.deskfloor.repository.EmployeeRepository;
 import com.deskfloor.repository.LeaveRepository;
 import org.springframework.stereotype.Service;
-import com.deskfloor.dto.AttendanceStatisticsResponse;
-import com.deskfloor.dto.LeaveStatisticsResponse;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         LocalDate today = LocalDate.now();
 
+        // Employee Statistics
         long totalEmployees = employeeRepository.count();
 
         long activeEmployees =
@@ -52,30 +54,9 @@ public class DashboardServiceImpl implements DashboardService {
         long inactiveEmployees =
                 employeeRepository.countByStatus(EmployeeStatus.INACTIVE);
 
-        long totalDepartments =
-                departmentRepository.count();
-
-        long presentToday =
-                attendanceRepository.countByAttendanceDateAndStatus(
-                        today,
-                        AttendanceStatus.PRESENT
-                );
-
-        long totalAttendanceToday =
-                attendanceRepository.countByAttendanceDate(today);
-
-        long absentToday =
-                totalEmployees - totalAttendanceToday;
-
-        long employeesOnLeave =
-                leaveRepository
-                        .countByStatusAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-                                LeaveStatus.APPROVED,
-                                today,
-                                today
-                        );
-
         // Department Statistics
+        long totalDepartments = departmentRepository.count();
+
         List<Object[]> statistics =
                 employeeRepository.getDepartmentStatistics();
 
@@ -93,38 +74,25 @@ public class DashboardServiceImpl implements DashboardService {
             departmentStatistics.add(dto);
         }
 
-        // Hiring Statistics
-        LocalDate firstDayOfMonth = today.withDayOfMonth(1);
-        LocalDate firstDayOfYear = today.withDayOfYear(1);
+        // Attendance Statistics
+        long presentToday =
+                attendanceRepository.countByAttendanceDateAndStatus(
+                        today,
+                        AttendanceStatus.PRESENT);
 
-        long employeesJoinedToday =
-                employeeRepository.countByJoiningDate(today);
+        long totalAttendanceToday =
+                attendanceRepository.countByAttendanceDate(today);
 
-        long employeesJoinedThisMonth =
-                employeeRepository.countByJoiningDateBetween(
-                        firstDayOfMonth,
-                        today
-                );
+        long absentToday =
+                totalEmployees - totalAttendanceToday;
 
-        long employeesJoinedThisYear =
-                employeeRepository.countByJoiningDateBetween(
-                        firstDayOfYear,
-                        today
-                );
+        long employeesOnLeave =
+                leaveRepository
+                        .countByStatusAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                                LeaveStatus.APPROVED,
+                                today,
+                                today);
 
-        response.setTotalEmployees(totalEmployees);
-        response.setActiveEmployees(activeEmployees);
-        response.setInactiveEmployees(inactiveEmployees);
-        response.setTotalDepartments(totalDepartments);
-        response.setPresentToday(presentToday);
-        response.setAbsentToday(absentToday);
-        response.setEmployeesOnLeave(employeesOnLeave);
-
-        response.setDepartmentStatistics(departmentStatistics);
-
-        response.setEmployeesJoinedToday(employeesJoinedToday);
-        response.setEmployeesJoinedThisMonth(employeesJoinedThisMonth);
-        response.setEmployeesJoinedThisYear(employeesJoinedThisYear);
         AttendanceStatisticsResponse attendanceStatistics =
                 new AttendanceStatisticsResponse();
 
@@ -132,6 +100,7 @@ public class DashboardServiceImpl implements DashboardService {
         attendanceStatistics.setAbsent(absentToday);
         attendanceStatistics.setOnLeave(employeesOnLeave);
 
+        // Leave Statistics
         LeaveStatisticsResponse leaveStatistics =
                 new LeaveStatisticsResponse();
 
@@ -144,8 +113,53 @@ public class DashboardServiceImpl implements DashboardService {
         leaveStatistics.setRejected(
                 leaveRepository.countByStatus(LeaveStatus.REJECTED));
 
+        // Hiring Statistics
+        LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+        LocalDate firstDayOfYear = today.withDayOfYear(1);
+
+        long employeesJoinedToday =
+                employeeRepository.countByJoiningDate(today);
+
+        long employeesJoinedThisMonth =
+                employeeRepository.countByJoiningDateBetween(
+                        firstDayOfMonth,
+                        today);
+
+        long employeesJoinedThisYear =
+                employeeRepository.countByJoiningDateBetween(
+                        firstDayOfYear,
+                        today);
+
+        // Employee Status Statistics
+        EmployeeStatusStatisticsResponse employeeStatusStatistics =
+                new EmployeeStatusStatisticsResponse();
+
+        employeeStatusStatistics.setActive(activeEmployees);
+        employeeStatusStatistics.setInactive(inactiveEmployees);
+
+        // Set Response
+        response.setTotalEmployees(totalEmployees);
+        response.setActiveEmployees(activeEmployees);
+        response.setInactiveEmployees(inactiveEmployees);
+
+        response.setEmployeesJoinedToday(employeesJoinedToday);
+        response.setEmployeesJoinedThisMonth(employeesJoinedThisMonth);
+        response.setEmployeesJoinedThisYear(employeesJoinedThisYear);
+
+        response.setTotalDepartments(totalDepartments);
+
+        response.setPresentToday(presentToday);
+        response.setAbsentToday(absentToday);
+        response.setEmployeesOnLeave(employeesOnLeave);
+
+        response.setDepartmentStatistics(departmentStatistics);
+
         response.setAttendanceStatistics(attendanceStatistics);
+
         response.setLeaveStatistics(leaveStatistics);
+
+        response.setEmployeeStatusStatistics(employeeStatusStatistics);
+
         return response;
     }
 }

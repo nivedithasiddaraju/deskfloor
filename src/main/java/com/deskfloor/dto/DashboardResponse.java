@@ -27,6 +27,7 @@ public class DashboardResponse {
     private AttendanceStatisticsResponse attendanceStatistics;
 
     private LeaveStatisticsResponse leaveStatistics;
+    private EmployeeStatusStatisticsResponse employeeStatusStatistics;
     public DashboardResponse() {
     }
 
@@ -133,5 +134,13 @@ public class DashboardResponse {
     public void setLeaveStatistics(
             LeaveStatisticsResponse leaveStatistics) {
         this.leaveStatistics = leaveStatistics;
+    }
+    public EmployeeStatusStatisticsResponse getEmployeeStatusStatistics() {
+        return employeeStatusStatistics;
+    }
+
+    public void setEmployeeStatusStatistics(
+            EmployeeStatusStatisticsResponse employeeStatusStatistics) {
+        this.employeeStatusStatistics = employeeStatusStatistics;
     }
 }
