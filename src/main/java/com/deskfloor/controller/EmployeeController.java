@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -159,6 +161,26 @@ public class EmployeeController {
                         true,
                         "Employee deleted successfully",
                         "Deleted"
+                )
+        );
+    }
+    @PostMapping(
+            value = "/{id}/profile-picture",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<EmployeeResponse>>
+    uploadProfilePicture(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+
+        EmployeeResponse response =
+                employeeService.uploadProfilePicture(id, file);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Profile picture uploaded successfully",
+                        response
                 )
         );
     }

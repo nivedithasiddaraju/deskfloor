@@ -10,8 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Repository
 public interface LeaveRepository extends JpaRepository<Leave, Long> {
+
 
     // Leave History
     List<Leave> findByEmployeeIdOrderByAppliedDateDesc(Long employeeId);
@@ -38,5 +40,9 @@ public interface LeaveRepository extends JpaRepository<Leave, Long> {
             LeaveStatus status,
             LocalDate startDate,
             LocalDate endDate
+    );
+    List<Leave> findByEmployeeIdAndStatus(
+            Long employeeId,
+            LeaveStatus status
     );
 }

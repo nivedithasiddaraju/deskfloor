@@ -4,6 +4,7 @@ import com.deskfloor.dto.LeaveRequest;
 import com.deskfloor.dto.LeaveResponse;
 import com.deskfloor.enums.LeaveStatus;
 import org.springframework.data.domain.Page;
+import com.deskfloor.dto.LeaveBalanceResponse;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public interface LeaveService {
     List<LeaveResponse> getApprovedLeaves();
 
     List<LeaveResponse> getRejectedLeaves();
+    List<LeaveBalanceResponse> getLeaveBalance(Long employeeId);
 
     Page<LeaveResponse> searchLeaves(
             String keyword,

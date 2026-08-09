@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.deskfloor.dto.EmployeeDashboardResponse;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -28,6 +30,23 @@ public class DashboardController {
                 new ApiResponse<>(
                         true,
                         "Dashboard fetched successfully",
+                        response
+                )
+        );
+    }
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<ApiResponse<EmployeeDashboardResponse>>
+    getEmployeeDashboard(
+            @PathVariable Long employeeId) {
+
+        EmployeeDashboardResponse response =
+                dashboardService.getEmployeeDashboard(
+                        employeeId);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Employee dashboard fetched successfully",
                         response
                 )
         );

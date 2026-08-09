@@ -38,6 +38,12 @@ public class Employee {
     @Column(name = "joining_date", nullable = false)
     private LocalDate joiningDate;
 
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @Column(name = "profile_picture")
+    private String profilePicture;
+
     @Enumerated(EnumType.STRING)
     private EmployeeStatus status;
 
@@ -122,5 +128,22 @@ public class Employee {
 
     public void setStatus(EmployeeStatus status) {
         this.status = status;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

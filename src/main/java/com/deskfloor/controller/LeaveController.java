@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.deskfloor.dto.LeaveBalanceResponse;
 
 import java.util.List;
 
@@ -211,6 +212,22 @@ public class LeaveController {
                 new ApiResponse<>(
                         true,
                         "Leaves fetched successfully",
+                        response
+                )
+        );
+    }
+    @GetMapping("/balance/{employeeId}")
+    public ResponseEntity<ApiResponse<List<LeaveBalanceResponse>>>
+    getLeaveBalance(
+            @PathVariable Long employeeId) {
+
+        List<LeaveBalanceResponse> response =
+                leaveService.getLeaveBalance(employeeId);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Leave balance fetched successfully",
                         response
                 )
         );

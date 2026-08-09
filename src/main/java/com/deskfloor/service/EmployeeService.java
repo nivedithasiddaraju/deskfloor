@@ -40,4 +40,9 @@ public interface EmployeeService {
 
     void deleteEmployee(Long id);
 
+
+    EmployeeResponse uploadProfilePicture(
+            Long employeeId,
+            org.springframework.web.multipart.MultipartFile file
+    );
 }

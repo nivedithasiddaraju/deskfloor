@@ -132,4 +132,26 @@ public class AttendanceController {
                 )
         );
     }
+    @GetMapping("/calendar/{employeeId}")
+    public ResponseEntity<ApiResponse<List<AttendanceResponse>>>
+    getMonthlyAttendance(
+            @PathVariable Long employeeId,
+            @RequestParam int year,
+            @RequestParam int month) {
+
+        List<AttendanceResponse> response =
+                attendanceService.getMonthlyAttendance(
+                        employeeId,
+                        year,
+                        month
+                );
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Monthly attendance fetched successfully",
+                        response
+                )
+        );
+    }
 }

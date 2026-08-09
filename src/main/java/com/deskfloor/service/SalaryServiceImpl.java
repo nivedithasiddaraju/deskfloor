@@ -12,6 +12,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import com.deskfloor.dto.PayrollSummaryResponse;
 import com.deskfloor.dto.MonthlyPayrollResponse;
+import com.deskfloor.service.EmailService;
 
 import java.time.LocalDate;
 
@@ -20,11 +21,15 @@ public class SalaryServiceImpl implements SalaryService {
 
     private final SalaryRepository salaryRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
+    public SalaryServiceImpl(
+            SalaryRepository salaryRepository,
+            EmployeeRepository employeeRepository,
+            EmailService emailService) {
 
-    public SalaryServiceImpl(SalaryRepository salaryRepository,
-                             EmployeeRepository employeeRepository) {
         this.salaryRepository = salaryRepository;
         this.employeeRepository = employeeRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -65,6 +70,28 @@ public class SalaryServiceImpl implements SalaryService {
         salary.setStatus(SalaryStatus.PAID);
 
         Salary savedSalary = salaryRepository.save(salary);
+
+        String subject = "Salary Generated - " + salary.getSalaryMonth()
+                + " " + salary.getSalaryYear();
+
+        String body =
+                "Hello " + employee.getFullName() + ",\n\n"
+                        + "Your salary has been generated successfully.\n\n"
+                        + "Salary Month: " + salary.getSalaryMonth() + "\n"
+                        + "Salary Year: " + salary.getSalaryYear() + "\n"
+                        + "Basic Salary: " + salary.getBasicSalary() + "\n"
+                        + "Bonus: " + salary.getBonus() + "\n"
+                        + "Deduction: " + salary.getDeduction() + "\n"
+                        + "Net Salary: " + salary.getNetSalary() + "\n"
+                        + "Status: " + salary.getStatus() + "\n\n"
+                        + "Regards,\n"
+                        + "Deskfloor HRMS";
+
+        emailService.sendEmail(
+                employee.getEmail(),
+                subject,
+                body
+        );
 
         return mapToResponse(savedSalary);
     }

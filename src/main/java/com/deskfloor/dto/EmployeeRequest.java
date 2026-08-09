@@ -31,6 +31,8 @@ public class EmployeeRequest {
     @NotNull(message = "Joining Date is required")
     private LocalDate joiningDate;
 
+    private LocalDate dateOfBirth;
+
     public EmployeeRequest() {
     }
 
@@ -96,5 +98,13 @@ public class EmployeeRequest {
 
     public void setJoiningDate(LocalDate joiningDate) {
         this.joiningDate = joiningDate;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }

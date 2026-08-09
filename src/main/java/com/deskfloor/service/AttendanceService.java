@@ -21,5 +21,10 @@ public interface AttendanceService {
     List<AttendanceResponse> getAttendanceByEmployee(Long employeeId);
 
     List<AttendanceResponse> getAttendanceByDate(LocalDate date);
+    List<AttendanceResponse> getMonthlyAttendance(
+            Long employeeId,
+            int year,
+            int month
+    );
 
 }

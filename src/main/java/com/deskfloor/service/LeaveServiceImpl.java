@@ -13,6 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import com.deskfloor.service.EmailService;
+import com.deskfloor.dto.LeaveBalanceResponse;
+import com.deskfloor.enums.LeaveType;
+
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,11 +28,33 @@ public class LeaveServiceImpl implements LeaveService {
 
     private final LeaveRepository leaveRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
+    private int getAnnualLeaveLimit(LeaveType leaveType) {
 
-    public LeaveServiceImpl(LeaveRepository leaveRepository,
-                            EmployeeRepository employeeRepository) {
+        return switch (leaveType) {
+
+            case CASUAL -> 12;
+
+            case SICK -> 12;
+
+            case EARNED -> 15;
+
+            case MATERNITY -> 180;
+
+            case PATERNITY -> 15;
+
+            case UNPAID -> 0;
+        };
+    }
+
+    public LeaveServiceImpl(
+            LeaveRepository leaveRepository,
+            EmployeeRepository employeeRepository,
+            EmailService emailService) {
+
         this.leaveRepository = leaveRepository;
         this.employeeRepository = employeeRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -67,6 +95,25 @@ public class LeaveServiceImpl implements LeaveService {
         leave.setApprovedDate(LocalDate.now());
 
         Leave updatedLeave = leaveRepository.save(leave);
+        Employee employee = leave.getEmployee();
+
+        String subject = "Leave Request Approved";
+
+        String body =
+                "Hello " + employee.getFullName() + ",\n\n"
+                        + "Your leave request has been approved.\n\n"
+                        + "Leave Type: " + leave.getLeaveType() + "\n"
+                        + "Start Date: " + leave.getStartDate() + "\n"
+                        + "End Date: " + leave.getEndDate() + "\n"
+                        + "Reason: " + leave.getReason() + "\n\n"
+                        + "Regards,\n"
+                        + "Deskfloor HRMS";
+
+        emailService.sendEmail(
+                employee.getEmail(),
+                subject,
+                body
+        );
 
         return mapToResponse(updatedLeave);
     }
@@ -86,6 +133,25 @@ public class LeaveServiceImpl implements LeaveService {
         leave.setApprovedDate(LocalDate.now());
 
         Leave updatedLeave = leaveRepository.save(leave);
+        Employee employee = leave.getEmployee();
+
+        String subject = "Leave Request Rejected";
+
+        String body =
+                "Hello " + employee.getFullName() + ",\n\n"
+                        + "Your leave request has been rejected.\n\n"
+                        + "Leave Type: " + leave.getLeaveType() + "\n"
+                        + "Start Date: " + leave.getStartDate() + "\n"
+                        + "End Date: " + leave.getEndDate() + "\n"
+                        + "Reason: " + leave.getReason() + "\n\n"
+                        + "Regards,\n"
+                        + "Deskfloor HRMS";
+
+        emailService.sendEmail(
+                employee.getEmail(),
+                subject,
+                body
+        );
 
         return mapToResponse(updatedLeave);
     }
@@ -233,5 +299,68 @@ public class LeaveServiceImpl implements LeaveService {
                 leave.getApprovedDate());
 
         return response;
+    }
+    @Override
+    public List<LeaveBalanceResponse> getLeaveBalance(Long employeeId) {
+
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Employee not found"));
+
+        List<Leave> approvedLeaves =
+                leaveRepository.findByEmployeeIdAndStatus(
+                        employeeId,
+                        LeaveStatus.APPROVED
+                );
+
+        List<LeaveBalanceResponse> balances =
+                new ArrayList<>();
+
+        int currentYear = LocalDate.now().getYear();
+
+        for (LeaveType leaveType : LeaveType.values()) {
+
+            int totalDays = getAnnualLeaveLimit(leaveType);
+
+            if (leaveType == LeaveType.UNPAID) {
+                balances.add(
+                        new LeaveBalanceResponse(
+                                leaveType,
+                                0,
+                                0,
+                                0
+                        )
+                );
+                continue;
+            }
+
+            int usedDays = approvedLeaves.stream()
+                    .filter(leave ->
+                            leave.getLeaveType() == leaveType)
+                    .filter(leave ->
+                            leave.getStartDate().getYear() == currentYear)
+                    .mapToInt(leave ->
+                            (int) ChronoUnit.DAYS.between(
+                                    leave.getStartDate(),
+                                    leave.getEndDate()
+                            ) + 1
+                    )
+                    .sum();
+
+            int remainingDays =
+                    Math.max(totalDays - usedDays, 0);
+
+            balances.add(
+                    new LeaveBalanceResponse(
+                            leaveType,
+                            totalDays,
+                            usedDays,
+                            remainingDays
+                    )
+            );
+        }
+
+        return balances;
     }
 }

@@ -19,6 +19,9 @@ public class EmployeeResponse {
     private Double salary;
     private LocalDate joiningDate;
     private EmployeeStatus status;
+    private LocalDate dateOfBirth;
+    private String profilePicture;
+
 
     public EmployeeResponse() {
     }
@@ -109,5 +112,20 @@ public class EmployeeResponse {
 
     public void setStatus(EmployeeStatus status) {
         this.status = status;
+    }
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.YearMonth;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
@@ -50,8 +51,17 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         attendance.setEmployee(employee);
         attendance.setAttendanceDate(LocalDate.now());
-        attendance.setCheckInTime(LocalTime.now());
-        attendance.setStatus(AttendanceStatus.PRESENT);
+        LocalTime checkInTime = LocalTime.now();
+
+        attendance.setCheckInTime(checkInTime);
+
+        LocalTime lateThreshold = LocalTime.of(9, 15);
+
+        if (checkInTime.isAfter(lateThreshold)) {
+            attendance.setStatus(AttendanceStatus.LATE);
+        } else {
+            attendance.setStatus(AttendanceStatus.PRESENT);
+        }
 
         Attendance savedAttendance =
                 attendanceRepository.save(attendance);
@@ -178,5 +188,35 @@ public class AttendanceServiceImpl implements AttendanceService {
                 attendance.getStatus());
 
         return response;
+    }
+    @Override
+    public List<AttendanceResponse> getMonthlyAttendance(
+            Long employeeId,
+            int year,
+            int month) {
+
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Employee not found"));
+
+        YearMonth yearMonth =
+                YearMonth.of(year, month);
+
+        LocalDate startDate =
+                yearMonth.atDay(1);
+
+        LocalDate endDate =
+                yearMonth.atEndOfMonth();
+
+        return attendanceRepository
+                .findByEmployeeIdAndAttendanceDateBetween(
+                        employeeId,
+                        startDate,
+                        endDate
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
